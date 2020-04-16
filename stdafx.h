@@ -1,0 +1,16 @@
+﻿#ifndef PCH_H
+#define PCH_H
+//#include "example/common/root_certificates.hpp"
+#include <boost/asio.hpp>
+#include <boost/asio/strand.hpp>
+#include <boost/beast/core.hpp>
+#include <boost/beast/ssl.hpp>
+#include <boost/beast/websocket.hpp>
+#include <boost/beast/websocket/ssl.hpp>
+#include <boost/algorithm/string.hpp>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/json_parser.hpp>
+#include <boost/config.hpp>
+#include <boost/optional.hpp>
+#include <boost/smart_ptr.hpp>
+#endif //PCH_H

@@ -1,0 +1,3 @@
+[submodule "sqlite-bind"]
+	path = sqlite-bind
+	url = https://github.com/paytonbissell/sqlite-bind.git
