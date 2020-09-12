@@ -10,7 +10,7 @@
 #include "http_session.hpp"
 #include "websocket_session.hpp"
 #include <iostream>
-#include "method_consts.h"
+#include "common/consts.h"
 
 /** Represents an established HTTP connection
 */

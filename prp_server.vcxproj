@@ -20,9 +20,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="beast.hpp" />
+    <ClInclude Include="common\consts.h" />
     <ClInclude Include="http_session.hpp" />
     <ClInclude Include="listener.hpp" />
-    <ClInclude Include="method_consts.h" />
     <ClInclude Include="net.hpp" />
     <ClInclude Include="Place.h" />
     <ClInclude Include="PlacesManager.h" />
@@ -34,6 +34,7 @@
     <ClInclude Include="websocket_session.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="common\consts.cpp" />
     <ClCompile Include="http_session.cpp">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
       </PrecompiledHeaderFile>
@@ -88,7 +89,6 @@
       <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       </PrecompiledHeaderOutputFile>
     </ClCompile>
-    <ClCompile Include="method_consts.cpp" />
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="PlacesManager.cpp">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">

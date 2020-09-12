@@ -16,6 +16,12 @@
     <Filter Include="Source Files\sqlite">
       <UniqueIdentifier>{9cd19a82-33bc-4d19-9cd1-929f9703b74d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\common">
+      <UniqueIdentifier>{0508d0bf-9e9b-4d9d-b69b-f7d435cae763}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\common">
+      <UniqueIdentifier>{1cbd749a-40d7-472b-a31d-e6ea0af41c37}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="beast.hpp">
@@ -54,8 +60,8 @@
     <ClInclude Include="websocket_session.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="method_consts.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="common\consts.h">
+      <Filter>Header Files\common</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -92,8 +98,8 @@
     <ClCompile Include="PlacesManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="method_consts.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="common\consts.cpp">
+      <Filter>Source Files\common</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
