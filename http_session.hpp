@@ -117,8 +117,8 @@ public:
             res.keep_alive(req.keep_alive());
 
             boost::property_tree::ptree root;
-            root.put("method", method);
-            root.put("result", result);
+            root.put(consts::METHOD, method);
+            root.put(consts::RESULT, result);
             std::stringstream s_stream;
             write_json(s_stream, root);
             res.body() = s_stream.str();
@@ -161,7 +161,7 @@ public:
                 return;
             // Load the json in this ptree
             read_json(ss, root);
-            const auto method = root.get<std::string>("method", "");
+            const auto method = root.get<std::string>(consts::METHOD);
             boost::system::error_code err;
             const auto ep = stream_.socket().remote_endpoint(err).address().to_string();
             std::cout << "http: method: " << method << ", from:" << ep << std::endl;
@@ -169,22 +169,22 @@ public:
             {
                 return send(bad_request("Empty method property"));
             }
-            if (method == methods::REGISTER_USER)
+            if (method == consts::methods::REGISTER_USER)
             {
                 //todo: register user, write to DB
-                const auto login = root.get<std::string>("login", "");
-                const auto password = root.get<std::string>("password", "");
-                const auto display_name = root.get<std::string>("display_name", "");
+                const auto login = root.get<std::string>(consts::LOGIN);
+                const auto password = root.get<std::string>(consts::PASSWORD);
+                const auto display_name = root.get<std::string>(consts::DISPLAY_NAME);
                 if (!state_->m_db_core->InsertUser(display_name, login, password))
                     return send(ok_response(method, "user exists"));
                 std::cout << "http: registered user: " << display_name <<  " with login: " << login << std::endl;
                 return send(ok_response(method, "registered"));
             }
-            if (method == methods::LOGIN_USER)
+            if (method == consts::methods::LOGIN_USER)
             {
-                const auto login = root.get<std::string>("login", "");
-                const auto password = root.get<std::string>("password", "");
-                const auto is_fb = root.get<std::string>("isFB", "");
+                const auto login = root.get<std::string>(consts::LOGIN);
+                const auto password = root.get<std::string>(consts::PASSWORD);
+                const auto is_fb = root.get<std::string>(consts::IS_FB);
                 if (state_->userLoggedIn(login))
                 {
                     std::cout << "http: user with login: " << login << " already logged in" << std::endl;
@@ -204,10 +204,10 @@ public:
                 std::cout << "http: user: " << login << ": wrong password" << std::endl;
                 return send(ok_response(method, "wrong credentials"));
             }
-            if (method == methods::LOGIN_FB_USER)
+            if (method == consts::methods::LOGIN_FB_USER)
             {
-                const auto login = root.get<std::string>("login", "");
-                const auto display_name = root.get<std::string>("display_name", "");
+                const auto login = root.get<std::string>(consts::LOGIN);
+                const auto display_name = root.get<std::string>(consts::DISPLAY_NAME);
                 state_->m_db_core->InsertUser(display_name, login, login); //tmp hack: register FB user with password same as login(FB id)
                 if (state_->m_db_core->CheckUserPassword(login, login)) //always true
                 {
@@ -216,82 +216,79 @@ public:
                 }
                 assert(false); //should never been here (for now we always successfully login FB user)
             }
-            else if (method == methods::ADD_PLACE)
+            else if (method == consts::methods::ADD_PLACE)
             {
                 PlaceInfo place;
-                place.latitude = root.get<std::string>("latitude", "");
+                place.latitude = root.get<std::string>(consts::places::LATITUDE);
                 if (place.latitude.empty())
                 {
                     std::cerr << "method add_place error: empty latitude\n";
                     return send(bad_request("Empty latitude"));
                 }
-                place.longitude = root.get<std::string>("longitude", "");
+                place.longitude = root.get<std::string>(consts::places::LONGITUDE);
                 if (place.longitude.empty())
                 {
                     std::cerr << "method add_place error: empty longitude\n";
                     return send(bad_request("Empty longitude"));
                 }
-                place.name = root.get<std::string>("name", "");
-                place.category = root.get<std::string>("category", "");
-                place.subcategory = root.get<std::string>("subcategory", "");
-                place.name = root.get<std::string>("name", "");
-                place.category = root.get<std::string>("category", "");
-                place.subcategory = root.get<std::string>("subcategory", "");
-                place.from_time = root.get<std::string>("from_time", "");
-                place.to_time = root.get<std::string>("to_time", "");
-                const auto expire = root.get<std::string>("expire_time", "");
+                place.name = root.get<std::string>(consts::places::NAME);
+                place.category = root.get<std::string>(consts::places::CATEGORY);
+                place.subcategory = root.get<std::string>(consts::places::SUBCATEROGY);
+                place.from_time = root.get<std::string>(consts::places::FROM_TIME);
+                place.to_time = root.get<std::string>(consts::places::TO_TIME);
+                const auto expire = root.get<std::string>(consts::places::EXPIRE_TIME);
                 std::cout << "EXPIRE IS: " << expire << std::endl;
                 place.expire_time = std::chrono::seconds{ std::atoll(expire.c_str()) };
                 std::cout << "final expire: " <<place.expire_time.count() << std::endl;
-                place.creator_login = root.get<std::string>("creator_login", "");
-                place.expected_people_number = root.get<std::string>("expected_people_number", "");
-                place.expected_expenses = root.get<std::string>("expected_expenses", "");
-                place.description = root.get<std::string>("description", "");
+                place.creator_login = root.get<std::string>(consts::places::CREATOR_LOGIN);
+                place.expected_people_number = root.get<std::string>(consts::places::EXPECTED_PEOPLE_AMOUNT);
+                place.expected_expenses = root.get<std::string>(consts::places::EXPECTED_EXPENSES);
+                place.description = root.get<std::string>(consts::places::DESCRIPTION);
                 const auto id = state_->m_places_manager->AddPlace(std::move(place));
                 return send(ok_response(method, std::to_string(id)));
             }
-            else if (method == methods::DELETE_MARKER)
+            else if (method == consts::methods::DELETE_MARKER)
             {
-                const auto id = root.get<std::string>("id", "");
+                const auto id = root.get<std::string>(consts::ID);
                 state_->m_places_manager->DeletePlaceById(std::atoll(id.c_str()));
                 return send(ok_response(method, "place deleted"));
             }
-            else if (method == methods::GET_USER_IMAGE)
+            else if (method == consts::methods::GET_USER_IMAGE)
             {
-                const auto login = root.get<std::string>("login", "");
+                const auto login = root.get<std::string>(consts::LOGIN);
                 const auto image = state_->m_db_core->GetImageByLogin(login);
                 if (image.empty())
                     return send(ok_response(method, "no image"));
                 return send(ok_response(method, image));
             }
-            else if (method == methods::UPLOAD_USER_IMAGE)
+            else if (method == consts::methods::UPLOAD_USER_IMAGE)
             {
-                const auto login = root.get<std::string>("login", "");
-                const auto image = root.get<std::string>("image", "");
+                const auto login = root.get<std::string>(consts::LOGIN);
+                const auto image = root.get<std::string>(consts::IMAGE);
                 if (!state_->m_db_core->SetUserImageByLogin(login, image))
                     return send(ok_response(method, "image was not uploaded"));
                 return send(ok_response(method, "image uploaded"));
             }
-            else if (method == methods::GET_DISPLAY_NAME)
+            else if (method == consts::methods::GET_DISPLAY_NAME)
             {
-                const auto login = root.get<std::string>("login", "");
+                const auto login = root.get<std::string>(consts::LOGIN);
                 const auto user = state_->m_db_core->GetUserByLogin(login);
                 if (!user.has_value())
                     return send(ok_response(method, "no such user"));
                 return send(ok_response(method, user->display_name));
             }
-            else if (method == methods::UPLOAD_MARKER_IMAGE)
+            else if (method == consts::methods::UPLOAD_MARKER_IMAGE)
             {
-                const auto id = root.get<std::string>("id", "");
-                auto image = root.get<std::string>("image", "");
+                const auto id = root.get<std::string>(consts::ID);
+                auto image = root.get<std::string>(consts::IMAGE);
                 std::cout << "upload marker image size: " << image.size();
                 if (state_->m_places_manager->AddPlaceImage(std::atoll(id.c_str()), std::move(image)))
                     return send(ok_response(method, "image added"));
                 return send(ok_response(method, "image was not added"));
             }
-            else if (method == methods::GET_MARKER_IMAGE)
+            else if (method == consts::methods::GET_MARKER_IMAGE)
             {
-                const auto id = root.get<std::string>("id", "");
+                const auto id = root.get<std::string>(consts::ID);
                // if (id < 0)
                     //return send(ok_response(method, "invalid marker id"));
                 const auto image = state_->m_places_manager->GetPlaceImage(std::atoll(id.c_str()));
@@ -299,9 +296,9 @@ public:
                     return send(ok_response(method, "no image"));
                 return send(ok_response(method, image));
             }
-            else if (method == methods::GET_USER_STATUS)
+            else if (method == consts::methods::GET_USER_STATUS)
             {
-                const auto login = root.get<std::string>("login", "");
+                const auto login = root.get<std::string>(consts::LOGIN);
                 if (state_->userLoggedIn(login))
                     return send(ok_response(method, "online"));
                 return send(ok_response(method, "offline"));

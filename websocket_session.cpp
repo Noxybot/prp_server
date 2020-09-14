@@ -10,6 +10,7 @@
 #include "websocket_session.hpp"
 #include <iostream>
 #include <chrono>
+#include "common/consts.h"
 
 websocket_session::websocket_session(tcp::socket&& socket, boost::shared_ptr<shared_state> state)
     : ws_(std::move(socket))
@@ -64,10 +65,10 @@ void websocket_session::on_read(beast::error_code ec, std::size_t)
     read_json(ss, root);
     const auto method = root.get<std::string>("method", "");
     std::cout << "ws: method: " << method << std::endl;
-    if (method == "login_user")
+    if (method == consts::methods::LOGIN_USER)
     {
         std::unique_lock<std::mutex> lock{ m_login_mutex };
-        m_login = root.get<std::string>("login", "");
+        m_login = root.get<std::string>(consts::LOGIN, "");
         const auto login = m_login; //save in local variable to unlock mutex
         lock.unlock();
         if (login.empty())
@@ -78,8 +79,8 @@ void websocket_session::on_read(beast::error_code ec, std::size_t)
         m_state->Join(login, shared_from_this());
 
         boost::property_tree::ptree login_user_json;
-        login_user_json.put("method", "login_user");
-        login_user_json.put("login", login);
+        login_user_json.put(consts::METHOD, consts::methods::LOGIN_USER);
+        login_user_json.put(consts::LOGIN, login);
         std::stringstream s_stream;
         write_json(s_stream, root);
         m_state->send("", s_stream.str()); //just broadcast login_user
@@ -94,12 +95,12 @@ void websocket_session::on_read(beast::error_code ec, std::size_t)
             db_core->DeleteUserUndeliveredMessage(login, message);
         }
     }
-    else if (method == "send_message")
+    else if (method == consts::methods::SEND_MESSAGE)
     {
-        const auto to_login = root.get<std::string>("to", "");
-        const auto from_login = root.get<std::string>("from", "");
+        const auto to_login = root.get<std::string>(consts::TO, "");
+        const auto from_login = root.get<std::string>(consts::FROM, "");
         auto now = std::chrono::system_clock::now();
-        root.put("timestamp", std::chrono::duration_cast<std::chrono::seconds>(now.time_since_epoch()).count());
+        root.put(consts::TIMESTAMP, std::chrono::duration_cast<std::chrono::seconds>(now.time_since_epoch()).count());
         std::stringstream s_stream;
         write_json(s_stream, root);
         if (m_state->userLoggedIn(to_login))
