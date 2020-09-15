@@ -17,10 +17,10 @@
       <UniqueIdentifier>{9cd19a82-33bc-4d19-9cd1-929f9703b74d}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\common">
-      <UniqueIdentifier>{0508d0bf-9e9b-4d9d-b69b-f7d435cae763}</UniqueIdentifier>
+      <UniqueIdentifier>{827d3a38-87b6-4bdf-9b20-a4bbdac9ac46}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\common">
-      <UniqueIdentifier>{1cbd749a-40d7-472b-a31d-e6ea0af41c37}</UniqueIdentifier>
+      <UniqueIdentifier>{9b23eb73-b14a-4c20-8aef-37cd7ece9a12}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -60,7 +60,7 @@
     <ClInclude Include="websocket_session.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="common\consts.h">
+    <ClInclude Include="prp_common\consts.h">
       <Filter>Header Files\common</Filter>
     </ClInclude>
   </ItemGroup>
@@ -98,7 +98,7 @@
     <ClCompile Include="PlacesManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="common\consts.cpp">
+    <ClCompile Include="prp_common\consts.cpp">
       <Filter>Source Files\common</Filter>
     </ClCompile>
   </ItemGroup>
