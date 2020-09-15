@@ -1,3 +1,6 @@
 [submodule "sqlite-bind"]
 	path = sqlite-bind
 	url = https://github.com/paytonbissell/sqlite-bind.git
+[submodule "prp_common"]
+	path = prp_common
+	url = https://github.com/Noxybot/prp_common.git
